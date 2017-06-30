@@ -69,11 +69,14 @@ if __name__ == '__main__':
                         help='SNAP hostname of IP. Default: 10.10.10.101')
     parser.add_argument('-c', '--scale', type=int, default=1,
                         help='Scale coefficient')
-    parser.add_argument('-A', '--antennas', type=list, default=(3,4,7,8),
+    parser.add_argument('-A', '--antennas', type=list, default=[3,4,7,8],
                         help='List of antennas to correlate, based on SNAP input number')
 
     opts = parser.parse_args()
     ants = opts.antennas
+    print ants
+    print ants.type
+    print ants[0]
     scale = opts.scale
 
     #if len(args) == 0:
@@ -140,7 +143,7 @@ if __name__ == '__main__':
                 time.sleep(0.05)
             elif latest_acc == this_acc + 1:
                 print 'Got %d accumulation after %.2f seconds' % (latest_acc, (latest_acc_time - this_acc_time))
-                data  += [get_data(r)]
+                data  += [get_data(r, ant_list=ants)]
                 times += [latest_acc_time]
                 this_acc = latest_acc
                 this_acc_time = latest_acc_time
