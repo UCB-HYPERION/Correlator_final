@@ -14,11 +14,11 @@ def get_data(r, ant_list):
     Return a dictionary of numpy data arrays, which may or may not be complex
     """
     rv = {}
-    for x in ant_list:
+    for x in np.arange(len(ant_list)):
         i = ant_list[x]
         auto = '{i}_auto'.format(i=i)
         rv[auto] = get_auto_corr(r, i)
-        for y in ant_list:
+        for y in np.arange(len(ant_list)):
             j = ant_list[y]
             if i < j:
                 cross = '{i}_{j}_cross'.format(i=i,j=j)
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     print 'Setting accumulation length to %d spectra' % opts.acc_len,
     print '(%.2f seconds)' % (opts.acc_len * 2 * NCHANS / ADC_CLK)
     r.write_int('acc_len', opts.acc_len)
-    for i in ants:
+    for i in np.arange(len(ants)):
         scale_i = 'scale{x}'.format(x=ants[i])
         r.write_int(scale_i, scale)
 
