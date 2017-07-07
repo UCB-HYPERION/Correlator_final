@@ -36,11 +36,11 @@ s.write_int('postquant_ctrl', 0)
 # NOTE: maybe add actual adc snapshot block to look at the incoming rms, sanity 
 # check?
 
-prequant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
-preq = struct.unpack('>2048d',prequant_data['data'])
+prequant_data = s.snapshot_get('prequant',man_trig=True,man_valid=True)
+preq = struct.unpack('>256q',prequant_data['data'])
 preq = np.asarray(preq)
 postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
-postq = struct.unpack('>2048b',postquant_data['data'])
+postq = struct.unpack('>256b',postquant_data['data'])
 postq = np.asarray(postq)
 
 preq_sigma = np.sqrt(np.var(preq))

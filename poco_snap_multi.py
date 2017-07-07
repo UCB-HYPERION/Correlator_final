@@ -30,7 +30,7 @@ def get_auto_corr(r, i):
     Return the real auto-correlation data array.
     """
     auto_reg = 'ac_a{i}_real'.format(i=i)
-    return np.fromstring(r.read(auto_reg, 8*NCHANS), dtype='>i8')
+    return np.fromstring(r.read(auto_reg, 4*NCHANS), dtype='>i4')
 
 def get_cross_corr(r, i, j):
     """
@@ -39,8 +39,8 @@ def get_cross_corr(r, i, j):
     real_reg = 'cc_a{i}_a{j}_real'.format(i=i,j=j)
     imag_reg = 'cc_a{i}_a{j}_imag'.format(i=i,j=j)
     return (
-            np.fromstring(r.read(real_reg, 8*NCHANS), dtype='>i8') 
-            + 1j*np.fromstring(r.read(imag_reg, 8*NCHANS), dtype='>i8')
+            np.fromstring(r.read(real_reg, 4*NCHANS), dtype='>i4') 
+            + 1j*np.fromstring(r.read(imag_reg, 4*NCHANS), dtype='>i4')
     )
 
 def write_file(d, t, prefix='dat_poco_snap_multi'):
