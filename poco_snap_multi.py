@@ -67,7 +67,7 @@ if __name__ == '__main__':
                         help='Time in seconds of each data file. Default: 600')
     parser.add_argument('-s', '--snap', default='10.10.10.101',
                         help='SNAP hostname of IP. Default: 10.10.10.101')
-    parser.add_argument('-c', '--scale', type=int, default=1,
+    parser.add_argument('-c', '--scale', type=int, default=4096,
                         help='Scale coefficient')
     parser.add_argument('-A', '--antennas', type=list, default=[3,4,7,8],
                         help='List of antennas to correlate, based on SNAP input number')
