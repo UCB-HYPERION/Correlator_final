@@ -40,7 +40,7 @@ s.write_int('adc_stats_ctrl', 0)
 # check?
 
 adc_stats = s.snapshot_get('adc_stats',man_trig=True,man_valid=True)
-stats = struct.unpack('>256q',adc_stats['data'])
+stats = struct.unpack('>256b',adc_stats['data'])
 stats = np.asarray(stats)
 #prequant_data = s.snapshot_get('prequant',man_trig=True,man_valid=True)
 #preq = struct.unpack('>256q',prequant_data['data'])
