@@ -26,46 +26,60 @@ s = corr.katcp_wrapper.FpgaClient(host,7147,timeout = 10)
 time.sleep(1)
 scale_ant = 'scale{x}'.format(x=antenna)
 s.write_int(scale_ant, scale)
-s.write_int('prequant_select', antenna)
-s.write_int('postquant_select', antenna)
-s.write_int('prequant_ctrl', 1)
-s.write_int('postquant_ctrl', 1)
-s.write_int('prequant_ctrl', 0)
-s.write_int('postquant_ctrl', 0)
+#s.write_int('prequant_select', antenna)
+#s.write_int('postquant_select', antenna)
+#s.write_int('prequant_ctrl', 1)
+#s.write_int('postquant_ctrl', 1)
+#s.write_int('prequant_ctrl', 0)
+#s.write_int('postquant_ctrl', 0)
+s.write_int('antenna', antenna)
+s.write_int('adc_stats', 1)
+s.write_int('adc_stats', 0)
 
 # NOTE: maybe add actual adc snapshot block to look at the incoming rms, sanity 
 # check?
 
-prequant_data = s.snapshot_get('prequant',man_trig=True,man_valid=True)
-preq = struct.unpack('>256q',prequant_data['data'])
-preq = np.asarray(preq)
-postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
-postq = struct.unpack('>256b',postquant_data['data'])
-postq = np.asarray(postq)
+adc_stats = s.snapshot_get('adc_stats',man_trig=True,man_valid=True)
+stats = struct.unpack('>256q',adc_stats['data'])
+stats = np.asarray(stats)
+#prequant_data = s.snapshot_get('prequant',man_trig=True,man_valid=True)
+#preq = struct.unpack('>256q',prequant_data['data'])
+#preq = np.asarray(preq)
+#postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
+#postq = struct.unpack('>256b',postquant_data['data'])
+#postq = np.asarray(postq)
 
-preq_sigma = np.sqrt(np.var(preq))
+sigma = np.sqrt(np.var(stats))
 print "Hey this one is the preequalization sigma"
-print preq_sigma
+print sigma
 
-preq_rms = np.sqrt(np.mean(np.square(preq)))
+rms = np.sqrt(np.mean(np.square(stats)))
 print "Hey this one is the preequalization rms"
-print preq_rms
+print rms
 
-postq_sigma = np.sqrt(np.var(postq))
-print "Hey this one is the postequalization sigma"
-print postq_sigma
+#preq_sigma = np.sqrt(np.var(preq))
+#print "Hey this one is the preequalization sigma"
+#print preq_sigma
 
-postq_rms = np.sqrt(np.mean(np.square(postq)))
-print "Hey this one is the postequalization rms"
-print postq_rms
+#preq_rms = np.sqrt(np.mean(np.square(preq)))
+#print "Hey this one is the preequalization rms"
+#print preq_rms
 
-#plt.figure(1)
-#plt.title('Adc Data: Antenna 0')
-#plt.plot(ad,'k')
-#plt.axis([0,65535,-136,135])
-#plt.grid(True)
+#postq_sigma = np.sqrt(np.var(postq))
+#print "Hey this one is the postequalization sigma"
+#print postq_sigma
 
-#plt.figure(2)
-#plt.hist(ad, bins=256) 
-#plt.title("Histogram with 256 bins")
-#plt.show()
+#postq_rms = np.sqrt(np.mean(np.square(postq)))
+#print "Hey this one is the postequalization rms"
+#print postq_rms
+
+plt.figure(1)
+plt.title('Adc Data: Antenna 0')
+plt.plot(stats,'k')
+plt.axis([0,65535,-136,135])
+plt.grid(True)
+
+plt.figure(2)
+plt.hist(stats, bins=256) 
+plt.title("Histogram with 256 bins")
+plt.show()
