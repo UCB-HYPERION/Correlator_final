@@ -33,8 +33,8 @@ s.write_int(scale_ant, scale)
 #s.write_int('prequant_ctrl', 0)
 #s.write_int('postquant_ctrl', 0)
 s.write_int('antenna', antenna)
-s.write_int('adc_stats', 1)
-s.write_int('adc_stats', 0)
+s.write_int('adc_stats_ctrl', 1)
+s.write_int('adc_stats_ctrl', 0)
 
 # NOTE: maybe add actual adc snapshot block to look at the incoming rms, sanity 
 # check?
