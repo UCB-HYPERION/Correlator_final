@@ -132,7 +132,7 @@ if __name__ == '__main__':
     this_acc = 0
     this_acc_time = trig_time
     file_start_time = time.time()
-    data  = []
+    data  = {}
     times = []
     while(True):
         try:
