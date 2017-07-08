@@ -4,6 +4,15 @@ import matplotlib.pylab as pl
 import numpy as np
 import glob
 import time
+import capo
+
+def fixpickle(pkl):
+    data = pkl.pop('data')
+    npz = {}
+    for k in data[0].keys():
+        npz[k] = np.array([di[k] for di in data])
+    npz['times'] = pkl['times']
+    return npz
 
 try:
     fn = sys.argv[1]
@@ -21,9 +30,10 @@ print files
 for file in files:
     with open(file, 'r') as fh:
         x = pickle.load(fh)
+    npz = fixpickle(x)
+    #npz = np.load(file)
 
-    times = x['times']
-    data  = x['data']
+    times = npz['times']
     frequencies =  (90.0/512) * np.arange(512) + 30
     print frequencies
 
@@ -32,18 +42,10 @@ for file in files:
     print 'Start time:'
     print time.asctime(time.localtime(times[0]))
 
-    print 'Data dictionary has keys:'
-    print data[0].keys()
+    xx_values = npz['2_auto'].astype(np.float64)
+    xy_values = npz['2_11_cross'] 
+    yy_values = npz['11_auto'].astype(np.float64)
 
-    xx_values = []
-    xy_values = []
-    yy_values = []
-
-    for i in np.arange(len(times)):
-        xx_values.append(data[i]['6_auto'])
-        xy_values.append(data[i]['6_11_cross'])
-        yy_values.append(data[i]['11_auto'])
-        #pylab.plot(10*np.log10(np.abs(vals)), label=vis)
 f_min = frequencies[np.argmin(frequencies)]
 f_max = frequencies[np.argmax(frequencies)]
 t_min = times[np.argmin(times)]
@@ -65,11 +67,12 @@ pl.colorbar()
 
 pl.figure(1)
 pl.subplot(121)
-pl.imshow(np.log10(xx_values), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min])
+pl.imshow(np.log10(xx_values/2**20), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min], interpolation='nearest')
 pl.title('Waterfall Plot -- Antenna 6 Auto-Correlation')
 pl.colorbar()
 pl.subplot(122)
-pl.imshow(np.log10(yy_values), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min])
+#pl.imshow(np.log10(yy_values), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min], interpolation='nearest')
+capo.plot.waterfall(yy_values/2**20, mode='log', cmap='magma', extent=[f_min,f_max,t_max,t_min])
 pl.title('Waterfall Plot -- Antenna 11 Auto-Correlation')
 pl.colorbar()
 pl.show()

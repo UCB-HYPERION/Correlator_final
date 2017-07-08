@@ -18,7 +18,7 @@
 #antenna = args.antenna
 
 host = 'rpi2-3'
-antenna = 2
+antenna = 11
 scale = 4096
 
 import corr, struct, numpy as np, matplotlib.pyplot as plt, time
@@ -74,9 +74,10 @@ print rms
 #print postq_rms
 
 plt.figure(1)
-plt.title('Adc Data: Antenna 0')
+title = 'ADC Data: Antenna {i}'.format(i=antenna)
+plt.title(title)
 plt.plot(stats,'k')
-plt.axis([0,65535,-136,135])
+plt.axis([0,256,-136,135])
 plt.grid(True)
 
 plt.figure(2)
