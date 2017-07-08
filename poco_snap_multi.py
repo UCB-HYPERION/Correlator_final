@@ -44,11 +44,10 @@ def get_cross_corr(r, i, j):
     )
 
 def write_file(d, t, prefix='dat_poco_snap_multi'):
-    fname = prefix + '-%s.pkl' % time.time()
+    fname = prefix + '-%s.npz' % time.time()
     print 'Writing %s' % fname,
     t0 = time.time()
-    with open(fname, 'w') as fh:
-        pickle.dump({'data': d, 'times': t}, fh)
+    np.savez(fname, times=t, **d)
     t1 = time.time()
     print 'Done in %.2f seconds' % (t1-t0)
         
@@ -119,7 +118,7 @@ if __name__ == '__main__':
 
     print 'Setting accumulation length to %d spectra' % opts.acc_len,
     print '(%.2f seconds)' % (opts.acc_len * 2 * NCHANS / ADC_CLK)
-    r.write_int('acc_len', opts.acc_len)
+    r.write_int('acc_len', 1024*opts.acc_len-1) #converting from accumulation number to clock cycles (zero indexed)
     for i in np.arange(len(ants)):
         scale_i = 'scale{x}'.format(x=ants[i])
         r.write_int(scale_i, scale)
@@ -143,14 +142,16 @@ if __name__ == '__main__':
                 time.sleep(0.05)
             elif latest_acc == this_acc + 1:
                 print 'Got %d accumulation after %.2f seconds' % (latest_acc, (latest_acc_time - this_acc_time))
-                data  += [get_data(r, ant_list=ants)]
+                new_data = get_data(r, ant_list=ants)
+                for key in new_data:
+                    data[key] = data.get(key,[]) + [new_data[key]]
                 times += [latest_acc_time]
                 this_acc = latest_acc
                 this_acc_time = latest_acc_time
                 if time.time() > (file_start_time + opts.filetime):
                     write_file(data, times)
                     file_start_time = time.time()
-                    data  = []
+                    data  = {}
                     times = []
             else:
                 print 'Last accumulation was number %d' % this_acc,
