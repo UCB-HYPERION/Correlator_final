@@ -19,11 +19,12 @@
 
 host = 'rpi2-3'
 antenna = 11
-scale = 256
+scale = 512
 
 import corr, struct, numpy as np, matplotlib.pyplot as plt, time
 s = corr.katcp_wrapper.FpgaClient(host,7147,timeout = 10)
 time.sleep(1)
+s.write_int('antenna', antenna)
 scale_ant = 'scale{x}'.format(x=antenna)
 s.write_int(scale_ant, scale)
 s.write_int('prequant_select', antenna)
@@ -32,7 +33,6 @@ s.write_int('prequant_ctrl', 1)
 s.write_int('postquant_ctrl', 1)
 s.write_int('prequant_ctrl', 0)
 s.write_int('postquant_ctrl', 0)
-s.write_int('antenna', antenna)
 s.write_int('adc_stats_ctrl', 1)
 s.write_int('adc_stats_ctrl', 0)
 
@@ -88,7 +88,7 @@ plt.figure(3)
 title = 'Pre-Quantization Data: Antenna {i}'.format(i=antenna)
 plt.title(title)
 plt.plot(preq,'k')
-plt.axis([0,256,-136,135])
+plt.axis([0,256,-262144,262143])
 plt.grid(True)
 
 plt.figure(4)
