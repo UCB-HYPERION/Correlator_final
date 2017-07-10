@@ -19,7 +19,7 @@
 
 host = 'rpi2-3'
 antenna = 11
-scale = 1
+scale = 1024
 
 import corr, struct, numpy as np, matplotlib.pyplot as plt, time
 s = corr.katcp_wrapper.FpgaClient(host,7147,timeout = 10)
