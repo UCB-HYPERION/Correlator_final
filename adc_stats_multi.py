@@ -88,7 +88,7 @@ plt.figure(3)
 title = 'Pre-Quantization Data: Antenna {i}'.format(i=antenna)
 plt.title(title)
 plt.plot(preq,'k')
-plt.axis([0,256,-262144,262143])
+plt.axis([0,256,-68719476736,68719476735])
 plt.grid(True)
 
 plt.figure(4)
