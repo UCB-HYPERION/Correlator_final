@@ -19,7 +19,7 @@
 
 host = 'rpi2-3'
 antenna = 11
-scale = 2048
+scale = 1
 
 import corr, struct, numpy as np, matplotlib.pyplot as plt, time
 s = corr.katcp_wrapper.FpgaClient(host,7147,timeout = 10)
@@ -36,9 +36,6 @@ s.write_int('antenna', antenna)
 s.write_int('adc_stats_ctrl', 1)
 s.write_int('adc_stats_ctrl', 0)
 
-# NOTE: maybe add actual adc snapshot block to look at the incoming rms, sanity 
-# check?
-
 adc_stats = s.snapshot_get('adc_stats',man_trig=True,man_valid=True)
 stats = struct.unpack('>256b',adc_stats['data'])
 stats = np.asarray(stats)
@@ -48,6 +45,8 @@ preq = np.asarray(preq)
 postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
 postq = struct.unpack('>256b',postquant_data['data'])
 postq = np.asarray(postq)
+print preq.datatype()
+print postq.datatype()
 print postq.max()
 print postq.min()
 
