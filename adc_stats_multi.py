@@ -91,7 +91,7 @@ plt.plot(postq,'k')
 plt.axis([0,256,-136,135])
 plt.grid(True)
 
-plt.figure(2)
+plt.figure(4)
 plt.hist(postq, bins=256) 
 plt.title("Histogram with 256 bins")
 plt.show()
