@@ -42,12 +42,14 @@ s.write_int('adc_stats_ctrl', 0)
 adc_stats = s.snapshot_get('adc_stats',man_trig=True,man_valid=True)
 stats = struct.unpack('>256b',adc_stats['data'])
 stats = np.asarray(stats)
-#prequant_data = s.snapshot_get('prequant',man_trig=True,man_valid=True)
-#preq = struct.unpack('>256q',prequant_data['data'])
-#preq = np.asarray(preq)
+prequant_data = s.snapshot_get('prequant',man_trig=True,man_valid=True)
+preq = struct.unpack('>256q',prequant_data['data'])
+preq = np.asarray(preq)
 postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
 postq = struct.unpack('>256b',postquant_data['data'])
 postq = np.asarray(postq)
+print len(preq)
+print len(postq)
 
 sigma = np.sqrt(np.var(stats))
 print "Hey this one is the preequalization sigma"
@@ -57,13 +59,13 @@ rms = np.sqrt(np.mean(np.square(stats)))
 print "Hey this one is the preequalization rms"
 print rms
 
-#preq_sigma = np.sqrt(np.var(preq))
-#print "Hey this one is the preequalization sigma"
-#print preq_sigma
+preq_sigma = np.sqrt(np.var(preq))
+print "Hey this one is the preequalization sigma"
+print preq_sigma
 
-#preq_rms = np.sqrt(np.mean(np.square(preq)))
-#print "Hey this one is the preequalization rms"
-#print preq_rms
+preq_rms = np.sqrt(np.mean(np.square(preq)))
+print "Hey this one is the preequalization rms"
+print preq_rms
 
 postq_sigma = np.sqrt(np.var(postq))
 print "Hey this one is the postequalization sigma"
