@@ -48,8 +48,8 @@ preq = np.asarray(preq)
 postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
 postq = struct.unpack('>256b',postquant_data['data'])
 postq = np.asarray(postq)
-print len(preq)
-print len(postq)
+print postq.max()
+print postq.min()
 
 sigma = np.sqrt(np.var(stats))
 print "Hey this one is the preequalization sigma"
