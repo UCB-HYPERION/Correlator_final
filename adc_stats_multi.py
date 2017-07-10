@@ -45,9 +45,9 @@ stats = np.asarray(stats)
 #prequant_data = s.snapshot_get('prequant',man_trig=True,man_valid=True)
 #preq = struct.unpack('>256q',prequant_data['data'])
 #preq = np.asarray(preq)
-#postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
-#postq = struct.unpack('>256b',postquant_data['data'])
-#postq = np.asarray(postq)
+postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
+postq = struct.unpack('>256b',postquant_data['data'])
+postq = np.asarray(postq)
 
 sigma = np.sqrt(np.var(stats))
 print "Hey this one is the preequalization sigma"
@@ -65,13 +65,13 @@ print rms
 #print "Hey this one is the preequalization rms"
 #print preq_rms
 
-#postq_sigma = np.sqrt(np.var(postq))
-#print "Hey this one is the postequalization sigma"
-#print postq_sigma
+postq_sigma = np.sqrt(np.var(postq))
+print "Hey this one is the postequalization sigma"
+print postq_sigma
 
-#postq_rms = np.sqrt(np.mean(np.square(postq)))
-#print "Hey this one is the postequalization rms"
-#print postq_rms
+postq_rms = np.sqrt(np.mean(np.square(postq)))
+print "Hey this one is the postequalization rms"
+print postq_rms
 
 plt.figure(1)
 title = 'ADC Data: Antenna {i}'.format(i=antenna)

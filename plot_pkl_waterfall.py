@@ -21,17 +21,15 @@ except IndexError:
     print 'Usage: read_pkl_example.py <filename>'
     exit()
 
-#files = np.sort(glob.glob('/home/kara/documents/hyperion/march_deployment/data/test_correlator_data_03-29-2017_early_am/*.pkl'))
-#files = np.sort(glob.glob('/home/kara/documents/hyperion/march_deployment/data/receiver_noise_03-30-2017/*.pkl'))
-#files = np.sort(glob.glob('/home/kara/documents/hyperion/march_deployment/data/first_light_03-30-2017_early_morning/*.pkl'))
-files = np.sort(glob.glob('/home/kara/src/python/berkeley/Correlator_final/*.pkl'))
+#files = np.sort(glob.glob('/home/kara/src/python/berkeley/Correlator_final/*.pkl'))
+files = np.sort(glob.glob('/home/kara/src/python/berkeley/Correlator_final/*.npz'))
 print files
 
 for file in files:
-    with open(file, 'r') as fh:
-        x = pickle.load(fh)
-    npz = fixpickle(x)
-    #npz = np.load(file)
+    #with open(file, 'r') as fh:
+        #x = pickle.load(fh)
+    #npz = fixpickle(x)
+    npz = np.load(file)
 
     times = npz['times']
     frequencies =  (90.0/512) * np.arange(512) + 30
@@ -53,7 +51,7 @@ t_max = times[np.argmax(times)]
 
 pl.figure(0)
 pl.subplot(121)
-pl.imshow(np.log10(np.abs(xy_values)), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min])
+pl.imshow(np.log10(np.abs(xy_values)/2**20), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min])
 pl.title('Cross-Correlation Waterfall Plot -- Intensity')
 pl.colorbar()
 pl.subplot(122)
