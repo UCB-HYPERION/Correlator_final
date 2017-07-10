@@ -45,8 +45,8 @@ preq = np.asarray(preq)
 postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
 postq = struct.unpack('>256b',postquant_data['data'])
 postq = np.asarray(postq)
-print preq.dtype()
-print postq.dtype()
+print preq.dtype
+print postq.dtype
 print postq.max()
 print postq.min()
 
