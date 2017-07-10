@@ -52,27 +52,27 @@ print postq.max()
 print postq.min()
 
 sigma = np.sqrt(np.var(stats))
-print "Hey this one is the preequalization sigma"
+print "Hey this one is the ADC sigma"
 print sigma
 
 rms = np.sqrt(np.mean(np.square(stats)))
-print "Hey this one is the preequalization rms"
+print "Hey this one is the ADC rms"
 print rms
 
 preq_sigma = np.sqrt(np.var(preq))
-print "Hey this one is the preequalization sigma"
+print "Hey this one is the prequantization sigma"
 print preq_sigma
 
 preq_rms = np.sqrt(np.mean(np.square(preq)))
-print "Hey this one is the preequalization rms"
+print "Hey this one is the prequantization rms"
 print preq_rms
 
 postq_sigma = np.sqrt(np.var(postq))
-print "Hey this one is the postequalization sigma"
+print "Hey this one is the postquantization sigma"
 print postq_sigma
 
 postq_rms = np.sqrt(np.mean(np.square(postq)))
-print "Hey this one is the postequalization rms"
+print "Hey this one is the postquantization rms"
 print postq_rms
 
 plt.figure(1)
