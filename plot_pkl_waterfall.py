@@ -22,10 +22,11 @@ except IndexError:
     exit()
 
 #files = np.sort(glob.glob('/home/kara/src/python/berkeley/Correlator_final/*.pkl'))
-files = np.sort(glob.glob('/home/kara/src/python/berkeley/Correlator_final/*.npz'))
-print files
+#files = np.sort(glob.glob('/home/kara/src/python/berkeley/Correlator_final/*.npz'))
+fn = sys.argv[1:]
+print fn
 
-for file in files:
+for file in fn:
     #with open(file, 'r') as fh:
         #x = pickle.load(fh)
     #npz = fixpickle(x)
