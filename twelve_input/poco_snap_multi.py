@@ -136,7 +136,7 @@ if __name__ == '__main__':
     file_start_time = time.time()
     data  = {}
     times = []
-    freqs = np.arange(0, ADC_CLK/2, ADC_CLK/2/NCHAN)
+    freqs = np.arange(0, ADC_CLK/2, ADC_CLK/2/NCHANS)
     while(True):
         try:
             latest_acc = r.read_uint('acc_num')
