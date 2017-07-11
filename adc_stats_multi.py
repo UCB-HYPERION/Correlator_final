@@ -19,7 +19,8 @@
 
 host = 'rpi2-3'
 antenna = 11
-scale = 362
+scale = 1024
+#scale = 362
 
 import corr, struct, numpy as np, matplotlib.pyplot as plt, time
 s = corr.katcp_wrapper.FpgaClient(host,7147,timeout = 10)
@@ -49,34 +50,35 @@ for each in preq:
     print "%o" % each, type(each)
 preq = npreq
 preq = np.asarray(preq)
+preq_top = preq >> 18 
+preq_bottom = 0x3FFFF & preq
 postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
 postq = struct.unpack('>256b',postquant_data['data'])
-postq = np.asarray(postq)
-print postq
-print "This is the post-quantization max value: {i}".format(i=postq.max())
-print "This is the post-quantization min value: {i}".format(i=postq.min())
-
-sigma = np.sqrt(np.var(stats))
-print "Hey this one is the ADC sigma"
-print sigma
+tpostq = []
+bpostq = []
+postq_rms = 0
+for each in postq:
+    top = (each >> 4) & 0x0F
+    if top > 2**3-1:
+        top = -(2**4-top)
+    tpostq.append(top)
+    bot = each & 0x0F
+    if bot > 2**3-1:
+        bot = -(2**4-bot)
+    bpostq.append(bot)
+    postq_rms += top**2 + bot**2
+real = np.asarray(tpostq)
+imag = np.asarray(bpostq)
 
 rms = np.sqrt(np.mean(np.square(stats)))
 print "Hey this one is the ADC rms"
 print rms
 
-preq_sigma = np.sqrt(np.var(preq))
-print "Hey this one is the prequantization sigma"
-print preq_sigma
-
 preq_rms = np.sqrt(np.mean(np.square(preq)))
 print "Hey this one is the prequantization rms"
 print preq_rms
 
-postq_sigma = np.sqrt(np.var(postq))
-print "Hey this one is the postquantization sigma"
-print postq_sigma
-
-postq_rms = np.sqrt(np.mean(np.square(postq)))
+postq_rms = np.sqrt(1.0*postq_rms/len(real))
 print "Hey this one is the postquantization rms"
 print postq_rms
 
@@ -105,7 +107,9 @@ plt.title("Histogram with 256 bins")
 plt.figure(5)
 title = 'Post-Quantization Data: Antenna {i}'.format(i=antenna)
 plt.title(title)
-plt.plot(postq,'k')
+plt.plot(real,'r', label='real')
+plt.plot(imag,'b', label='imag')
+plt.legend()
 #plt.axis([0,256,-136,135])
 plt.grid(True)
 
