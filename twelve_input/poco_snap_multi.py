@@ -43,11 +43,11 @@ def get_cross_corr(r, i, j):
             + 1j*np.fromstring(r.read(imag_reg, 4*NCHANS), dtype='>i4')
     )
 
-def write_file(d, t, prefix='dat_poco_snap_multi'):
+def write_file(d, times, freqs, inttime, prefix='dat_poco_snap_multi'):
     fname = prefix + '-%s.npz' % time.time()
     print 'Writing %s' % fname,
     t0 = time.time()
-    np.savez(fname, times=t, **d)
+    np.savez(fname, times=times, freqs=freqs, inttime=inttime, **d)
     t1 = time.time()
     print 'Done in %.2f seconds' % (t1-t0)
         
@@ -119,6 +119,8 @@ if __name__ == '__main__':
     print 'Setting accumulation length to %d spectra' % opts.acc_len,
     print '(%.2f seconds)' % (opts.acc_len * 2 * NCHANS / ADC_CLK)
     r.write_int('acc_len', 1024*opts.acc_len-1) #converting from accumulation number to clock cycles (zero indexed)
+    inttime = 1024*opts.acc_len / ADC_CLK # seconds
+    print 'Integration time: %f seconds' % inttime
     for i in np.arange(len(ants)):
         scale_i = 'scale{x}'.format(x=ants[i])
         r.write_int(scale_i, scale)
@@ -134,6 +136,7 @@ if __name__ == '__main__':
     file_start_time = time.time()
     data  = {}
     times = []
+    freqs = np.arange(0, ADC_CLK/2, ADC_CLK/2/NCHAN)
     while(True):
         try:
             latest_acc = r.read_int('acc_num')
@@ -161,5 +164,5 @@ if __name__ == '__main__':
                 this_acc_time = latest_acc_time
         except KeyboardInterrupt:
             'Exiting'
-            write_file(data, times)
+            write_file(data, times, freqs, inttime)
             exit()

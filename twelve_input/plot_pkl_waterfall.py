@@ -7,6 +7,7 @@ import time
 import capo
 
 def fixpickle(pkl):
+    '''Port legacy file format.'''
     data = pkl.pop('data')
     npz = {}
     for k in data[0].keys():
@@ -14,19 +15,8 @@ def fixpickle(pkl):
     npz['times'] = pkl['times']
     return npz
 
-try:
-    fn = sys.argv[1]
-    print fn
-except IndexError:
-    print 'Usage: read_pkl_example.py <filename>'
-    exit()
-
-#files = np.sort(glob.glob('/home/kara/src/python/berkeley/Correlator_final/*.pkl'))
-#files = np.sort(glob.glob('/home/kara/src/python/berkeley/Correlator_final/*.npz'))
-fn = sys.argv[1:]
-print fn
-
-for file in fn:
+for file in sys.argv[1:]:
+    print 'Reading', file
     #with open(file, 'r') as fh:
         #x = pickle.load(fh)
     #npz = fixpickle(x)
