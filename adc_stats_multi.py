@@ -41,8 +41,14 @@ stats = struct.unpack('>256b',adc_stats['data'])
 stats = np.asarray(stats)
 prequant_data = s.snapshot_get('prequant',man_trig=True,man_valid=True)
 preq = struct.unpack('>256q',prequant_data['data'])
+npreq = []
+for each in preq:
+    if each > 2**35-1:
+        each = -(2**36-each)
+    npreq.append(each)
+    print "%o" % each, type(each)
+preq = npreq
 preq = np.asarray(preq)
-print preq
 postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
 postq = struct.unpack('>256b',postquant_data['data'])
 postq = np.asarray(postq)
@@ -89,7 +95,7 @@ plt.figure(3)
 title = 'Pre-Quantization Data: Antenna {i}'.format(i=antenna)
 plt.title(title)
 plt.plot(preq,'k')
-plt.axis([0,256,-68719476736,68719476735])
+#plt.axis([0,256,-68719476736,68719476735])
 plt.grid(True)
 
 plt.figure(4)
@@ -100,7 +106,7 @@ plt.figure(5)
 title = 'Post-Quantization Data: Antenna {i}'.format(i=antenna)
 plt.title(title)
 plt.plot(postq,'k')
-plt.axis([0,256,-136,135])
+#plt.axis([0,256,-136,135])
 plt.grid(True)
 
 plt.figure(6)
