@@ -119,7 +119,7 @@ if __name__ == '__main__':
     print 'Setting accumulation length to %d spectra' % opts.acc_len,
     print '(%.2f seconds)' % (opts.acc_len * 2 * NCHANS / ADC_CLK)
     r.write_int('acc_len', 1024*opts.acc_len-1) #converting from accumulation number to clock cycles (zero indexed)
-    for i in np.arange(len(ants)):
+    for i in xrange(len(ants)):
         scale_i = 'scale{x}'.format(x=ants[i])
         r.write_int(scale_i, scale)
 
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     times = []
     while(True):
         try:
-            latest_acc = r.read_int('acc_num')
+            latest_acc = r.read_uint('acc_num')
             latest_acc_time = time.time()
             if latest_acc == this_acc:
                 time.sleep(0.05)
