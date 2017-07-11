@@ -42,12 +42,13 @@ stats = np.asarray(stats)
 prequant_data = s.snapshot_get('prequant',man_trig=True,man_valid=True)
 preq = struct.unpack('>256q',prequant_data['data'])
 preq = np.asarray(preq)
+print preq
 postquant_data = s.snapshot_get('postquant',man_trig=True,man_valid=True)
 postq = struct.unpack('>256b',postquant_data['data'])
 postq = np.asarray(postq)
-print postq.dtype
-print postq.max()
-print postq.min()
+print postq
+print "This is the post-quantization max value: {i}".format(i=postq.max())
+print "This is the post-quantization min value: {i}".format(i=postq.min())
 
 sigma = np.sqrt(np.var(stats))
 print "Hey this one is the ADC sigma"
