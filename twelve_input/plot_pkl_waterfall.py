@@ -1,10 +1,12 @@
 import cPickle as pickle
 import sys
-import matplotlib.pylab as pl
+import matplotlib.pylab as plt
 import numpy as np
 import glob
 import time
 import capo
+
+INTEGRATION_SCALAR = 2**20
 
 def fixpickle(pkl):
     '''Port legacy file format.'''
@@ -15,54 +17,57 @@ def fixpickle(pkl):
     npz['times'] = pkl['times']
     return npz
 
+data = {}
 for file in sys.argv[1:]:
     print 'Reading', file
     #with open(file, 'r') as fh:
         #x = pickle.load(fh)
-    #npz = fixpickle(x)
+        #npz = fixpickle(x)
     npz = np.load(file)
 
-    times = npz['times']
-    frequencies =  (90.0/512) * np.arange(512) + 30
-    print frequencies
+    for k in npz.files:
+        data[k] = data.get(k,[]) + [npz[k]]
 
-    print 'There are %d times in file %s' % (len(times), file)
+try: freqs = data.pop('freqs')[0]
+except(KeyError): freqs = np.arange(0, 250e6, 250e6/512)
+times = np.concatenate(data.pop('times'), axis=0)
+inttime = data.pop('inttime')
+print 'There are %d times in file %s' % (len(times), file)
+print 'Start time:'
+print time.asctime(time.localtime(times[0]))
 
-    print 'Start time:'
-    print time.asctime(time.localtime(times[0]))
-
-    xx_values = npz['2_auto'].astype(np.float64)
-    xy_values = npz['2_11_cross'] 
-    yy_values = npz['11_auto'].astype(np.float64)
-
-f_min = frequencies[np.argmin(frequencies)]
-f_max = frequencies[np.argmax(frequencies)]
+f_min = freqs[np.argmin(freqs)]
+f_max = freqs[np.argmax(freqs)]
 t_min = times[np.argmin(times)]
 t_max = times[np.argmax(times)]
 
-pl.figure(0)
-pl.subplot(121)
-pl.imshow(np.log10(np.abs(xy_values)/2**20), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min])
-pl.title('Cross-Correlation Waterfall Plot -- Intensity')
-pl.colorbar()
-pl.subplot(122)
-pl.imshow((np.angle(xy_values)), aspect='auto', cmap='coolwarm', extent=[f_min,f_max,t_max,t_min])
-pl.title('Cross-Correlation Waterfall Plot -- Phase')
-pl.colorbar()
+for k in data:
+    data[k] = np.concatenate(data[k], axis=0).astype(np.complex)
 
-#pl.figure(1)
-#pl.imshow(np.real(xy_values) - np.imag(xy_values), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min])
-#pl.title('Waterfall Plot -- Real Minus Imaginary')
+amp_kwargs = {
+    'cmap': 'jet',
+    #'aspect': 'auto',
+    #'interpolation': 'nearest',
+    'extent':[f_min,f_max,t_max,t_min]
+}
 
-pl.figure(1)
-pl.subplot(121)
-pl.imshow(np.log10(xx_values/2**20), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min], interpolation='nearest')
-pl.title('Waterfall Plot -- Antenna 6 Auto-Correlation')
-pl.colorbar()
-pl.subplot(122)
-#pl.imshow(np.log10(yy_values), aspect='auto', cmap='magma', extent=[f_min,f_max,t_max,t_min], interpolation='nearest')
-capo.plot.waterfall(yy_values/2**20, mode='log', cmap='magma', extent=[f_min,f_max,t_max,t_min])
-pl.title('Waterfall Plot -- Antenna 11 Auto-Correlation')
-pl.colorbar()
-pl.show()
+phs_kwargs = {k:val for k,val in amp_kwargs.items()}
+phs_kwargs['cmap'] = 'coolwarm'
 
+for cnt,(ant,d) in enumerate(data.items()):
+    #if not (ant.endswith('cross') or ant.endswith('auto')): continue
+    print ant
+    #import IPython; IPython.embed()
+    plt.figure(cnt)
+    plt.subplot(121)
+    capo.plot.waterfall(d/INTEGRATION_SCALAR, mode='log', mx=2, drng=3, **amp_kwargs)
+    plt.title('Waterfall Plot -- %s Amplitude' % ant)
+    plt.colorbar()
+    plt.subplot(122)
+    capo.plot.waterfall(d, mode='phs', mx=np.pi, drng=2*np.pi, **phs_kwargs)
+    plt.title('Waterfall Plot -- %s Phase' % ant)
+    plt.colorbar()
+
+plt.show()
+
+import IPython; IPython.embed()
