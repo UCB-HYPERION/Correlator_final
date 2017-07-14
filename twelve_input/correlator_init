@@ -1,0 +1,11 @@
+#!/bin/bash
+dateVar=$(date)
+ssh pi@10.10.10.101 "sudo date --set='$dateVar'"
+python /home/kara/src/python/berkeley/adc16/adc16_init.py 10.10.10.101 quantized_ver.bof -d 1
+python /home/kara/src/python/berkeley/adc16/plot_chans.py 10.10.10.101 quantized_ver.bof -d 1 -s
+python adc_stats_multi.py
+ssh -t -T pi@10.10.10.101 <<HERE
+    sudo mount -o uid=pi,gid=pi /dev/sda1 /mnt/usb
+    cd /mnt/usb
+    screen -dmSL corr python ~/poco_snap_multi.py -s localhost -A 1 3 4 8
+HERE
