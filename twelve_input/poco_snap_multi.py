@@ -152,7 +152,7 @@ if __name__ == '__main__':
                 this_acc = latest_acc
                 this_acc_time = latest_acc_time
                 if time.time() > (file_start_time + opts.filetime):
-                    write_file(data, times)
+                    write_file(data, times, freqs, inttime)
                     file_start_time = time.time()
                     data  = {}
                     times = []

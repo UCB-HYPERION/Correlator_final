@@ -17,10 +17,10 @@
 #host = args.host
 #antenna = args.antenna
 
-host = 'rpi2-3'
-antenna = 11
-scale = 1024
-#scale = 362
+host = '10.10.10.101'
+antenna = 4
+scale = 4
+#scale = 4096
 
 import corr, struct, numpy as np, matplotlib.pyplot as plt, time
 
@@ -73,6 +73,15 @@ for each in postq:
     tpostq.append(top)
     bot = reinterpret((each & 0x0F) << 4) >> 4
     bpostq.append(bot)
+    #top = (each >> 4) & 0x0F
+    #if top > 2**3-1:
+    #    top = -(2**4-top) + 1
+    #    print top
+    #tpostq.append(top)
+    #bot = each & 0x0F
+    #if bot > 2**3-1:
+    #    bot = -(2**4-bot) + 1
+    #bpostq.append(bot)
     postq_rms += top**2 + bot**2
 postq_real = np.asarray(tpostq)
 postq_imag = np.asarray(bpostq)
