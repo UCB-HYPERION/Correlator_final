@@ -5,6 +5,7 @@ import argparse
 import sys
 import numpy as np
 import cPickle as pickle
+import subprocess
 
 NCHANS = 512
 ADC_CLK = 250e6
@@ -52,6 +53,19 @@ def write_file(d, times, freqs, inttime, prefix='dat_poco_snap_multi'):
     print 'Done in %.2f seconds' % (t1-t0)
         
 
+def get_pi_temp():
+    # read temp off RPI
+    pi_temp = subprocess.check_output('cat /sys/class/thermal/thermal_zone0/temp',shell=True)
+    # convert to 32bit integer
+    return np.int32(pi_temp)
+
+def get_fpga_temp(fpga):
+    # returns SNAP FPGA core temperature
+    TEMP_OFFSET = 0x0
+    reg = 'xadc'
+    x = fpga.read_int(reg, TEMP_OFFSET)
+    return (x >> 4) * 503.975 / 4096. - 273.15
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--prog', action='store_true', default=False,
@@ -75,7 +89,6 @@ if __name__ == '__main__':
     opts = parser.parse_args()
     ants = opts.antennas
     print ants
-    print ants[0]
     scale = opts.scale
 
     #if len(args) == 0:
@@ -139,6 +152,8 @@ if __name__ == '__main__':
     freqs = np.arange(0, ADC_CLK/2, ADC_CLK/2/NCHANS)
     while(True):
         try:
+            print get_pi_temp()
+            print get_fpga_temp(r)
             latest_acc = r.read_uint('acc_num')
             latest_acc_time = time.time()
             if latest_acc == this_acc:
