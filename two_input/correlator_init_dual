@@ -1,0 +1,13 @@
+#!/bin/bash
+dateVar=$(date)
+ssh pi@10.10.10.101 "sudo date --set='$dateVar'"
+python adc16_init.py 10.10.10.101 dual_input_poco.bof -d 1
+python plot_chans.py 10.10.10.101 dual_input_poco.bof -d 1 -s
+python adc_stats.py
+ssh -t -T pi@10.10.10.101 <<HERE
+    sudo mount -o uid=pi,gid=pi /dev/sda1 /mnt/usb
+    cd /mnt/usb
+    mkdir correlator_test
+    cd correlator_test
+    screen -dmSL corr python ~/scihi-spec/sw/dual_input_poco/poco_snap_simple.py -s localhost
+HERE
