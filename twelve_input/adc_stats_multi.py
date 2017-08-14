@@ -1,33 +1,16 @@
-#	Eddie Toral
-#	CAMPARE Summer 2016 Research Undergrad
-#	August 16th, 2016
-#	
-#	Simple model used to obtain data to determine analog input level to digital output level relationship.
-#	75.0 MHz single tone from input levels +12dBm to -36.0 dBm.
-#	Direct connection to input of SNAP Board, no attenuators or filters used during testing.
-#	Only 1 antenna at a time, selectable by [option] -a to be selected when running script
-#	adc_stats_2016-8-16_1606.bof
-
-#from argparse import ArgumentParser
-#p = ArgumentParser(description = 'python adc_stats.py [options] ')
-#p.add_argument('host', type = str, default = '10.0.1.217', help = 'Specify the host name')
-#p.add_argument('-a', '--antenna', dest = 'antenna', type = int, default = 0, help = 'antenna selection')
-
-#args = p.parse_args()
-#host = args.host
-#antenna = args.antenna
+#import corr, struct, numpy as np, matplotlib.pyplot as plt, time
+import casperfpga, struct, numpy as np, matplotlib.pyplot as plt, time
 
 host = '10.10.10.101'
 antenna = 4
 scale = 4
 #scale = 4096
 
-import corr, struct, numpy as np, matplotlib.pyplot as plt, time
-
 def reinterpret(v):
     return struct.unpack('b',struct.pack('B',v))[0]
 
-s = corr.katcp_wrapper.FpgaClient(host,7147,timeout = 10)
+#s = corr.katcp_wrapper.FpgaClient(host,7147,timeout = 10)
+s = casperfpga.CasperFpga(host,7147,timeout = 10)
 time.sleep(1)
 s.write_int('antenna', antenna)
 scale_ant = 'scale{x}'.format(x=antenna)
@@ -41,6 +24,7 @@ s.write_int('postquant_ctrl', 0)
 s.write_int('adc_stats_ctrl', 1)
 s.write_int('adc_stats_ctrl', 0)
 
+# NEED TO MODIFY SNAPSHOTS TO FIT CASPERFPGA
 adc_stats = s.snapshot_get('adc_stats',man_trig=True,man_valid=True)
 stats = struct.unpack('>256b',adc_stats['data'])
 stats = np.asarray(stats)
