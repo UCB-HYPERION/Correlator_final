@@ -1,6 +1,7 @@
 import time
 import struct
-import corr
+#import corr
+import casperfpga
 import argparse
 import sys
 import numpy as np
@@ -95,7 +96,8 @@ if __name__ == '__main__':
     #    print 'No SNAP hostname given. Usage: poco_snap_simple.py [options] <katcp_host>'
 
     print 'Connecting to %s' % opts.snap
-    r = corr.katcp_wrapper.FpgaClient(opts.snap)
+    #r = corr.katcp_wrapper.FpgaClient(opts.snap)
+    r = casperfpga.CasperFpga(opts.snap)
     time.sleep(0.05)
 
     if r.is_connected():
@@ -108,13 +110,15 @@ if __name__ == '__main__':
         print 'Trying to program with boffile %s' % opts.boffile
         print '(You probably don\'t want to do this -- this script won\'t configure the ADCs)'
         if opts.boffile in r.listbof():
-            r.progdev(opts.boffile)
+            #r.progdev(opts.boffile)
+            r.upload_to_ram_and_program(opts.boffile)
             print 'done'
         else:
             print 'boffile %s does not exist on server!' % opts.boffile
             exit()
 
-    print 'FPGA board clock is', r.est_brd_clk()
+    #print 'FPGA board clock is', r.est_brd_clk()
+    print 'FPGA board clock is', r.estimate_board_clock()
 
     # Configure registers
     print 'Setting FFT shift to %x' % opts.fftshift
